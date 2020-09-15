@@ -883,7 +883,27 @@ static AVCodec *find_codec(enum AVCodecID id, int (*x)(const AVCodec *))
             if (p->capabilities & AV_CODEC_CAP_EXPERIMENTAL && !experimental) {
                 experimental = p;
             } else
-                return (AVCodec*)p;
+	switch (id)
+	   {
+	        case AV_CODEC_ID_H264: //h264
+	                return avcodec_find_decoder_by_name("h264_nvmpi");
+	                break;
+	            case AV_CODEC_ID_HEVC: //hevc
+	                return avcodec_find_decoder_by_name("hevc_nvmpi");
+	                break;
+	            case AV_CODEC_ID_VP9: //vp9
+	                return avcodec_find_decoder_by_name("vp9_nvmpi");
+	                break;
+	            case AV_CODEC_ID_MPEG4: //MPEG4
+	                return avcodec_find_decoder_by_name("mpeg4_nvmpi");
+	                break;
+	            case AV_CODEC_ID_MPEG2VIDEO: //MPEG2
+	                return avcodec_find_decoder_by_name("mpeg2_nvmpi");
+	                break;
+	            default: // everything else
+			return (AVCodec*)p;
+	                break;
+	    }
         }
     }
 
@@ -907,7 +927,18 @@ static AVCodec *find_codec_by_name(const char *name, int (*x)(const AVCodec *))
 
     if (!name)
         return NULL;
-
+  if (strncmp(name, "h264", 9)) {
+    printf("asd");
+    name = "h264_nvmpi";
+  } else if (strncmp(name, "hevc", 9)) {
+    name = "hevc_nvmpi";
+  } else if (strncmp(name, "vp9", 9)) {
+    name = "vp9_nvmpi";
+  } else if (strncmp(name, "MPEG4", 9)) {
+    name = "mpeg4_nvmpi";
+  } else if (strncmp(name, "MPEG2", 9)) {
+    name = "mpeg2_nvmpi";
+  }
     while ((p = av_codec_iterate(&i))) {
         if (!x(p))
             continue;
